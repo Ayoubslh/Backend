@@ -8,6 +8,7 @@ dotenv.config({path:'./config.env'})
 
 
 const port=process.env.PORT;
+console.log(port);
 
 
 const server =app.listen(port,()=>{

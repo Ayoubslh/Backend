@@ -56,7 +56,14 @@ const ClaimSchema = new mongoose.Schema({
         driver2: { type: String, required: true }  
     },
     createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+    expiresAt:{type:Date,default:Date.now()+6*30*24*3600*1000},
+    updatedAt: { type: Date, default: Date.now },
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
+        required:true
+    },
+    active: Boolean,
 });
 
 const Claim = mongoose.model('Claim', ClaimSchema);
