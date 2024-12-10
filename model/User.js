@@ -77,15 +77,15 @@ const subscriberSchema = new mongoose.Schema({
             match: [/^\d{23}$/, "RIB must be exactly 23 digits"], // Example for RIB format
         },
     },
-    // contractStartDate: {
-    //     type: Date,
-    //     validate: {
-    //         validator: function (value) {
-    //             return value >= new Date(); // Ensure date is not in the past
-    //         },
-    //         message: "Contract start date cannot be in the past",
-    //     },
-    // },
+    contractStartDate: {
+        type: Date,
+        validate: {
+            validator: function (value) {
+                return value >= new Date(); // Ensure date is not in the past
+            },
+            message: "Contract start date cannot be in the past",
+        },
+    },
     claim: {
         type: mongoose.Schema.ObjectId,
         ref : "claim",
