@@ -4,7 +4,7 @@ const userControllers = require('../controllers/userControllers');
 const authController=require('../authControllers/authController');
 Router.route('/signup').post(authController.signup);
 Router.route('/login').post(authController.login);
-
+Router.route('/updatecurrentuser').patch(authController.protect,userControllers.updateMe);
 Router.route('/').get(userControllers.getAllUsers)
 Router.route('/:id').get(userControllers.getUserById).delete(userControllers.deleteUser);
 
