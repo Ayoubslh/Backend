@@ -77,15 +77,15 @@ const subscriberSchema = new mongoose.Schema({
             match: [/^\d{23}$/, "RIB must be exactly 23 digits"], // Example for RIB format
         },
     },
-    contractStartDate: {
-        type: Date,
-        validate: {
-            validator: function (value) {
-                return value >= new Date(); // Ensure date is not in the past
-            },
-            message: "Contract start date cannot be in the past",
-        },
-    },
+    // contractStartDate: {
+    //     type: Date,
+    //     validate: {
+    //         validator: function (value) {
+    //             return value >= new Date(); // Ensure date is not in the past
+    //         },
+    //         message: "Contract start date cannot be in the past",
+    //     },
+    // },
     claim: {
         type: mongoose.Schema.ObjectId,
         ref : "claim",
@@ -100,11 +100,6 @@ subscriberSchema.pre("save", async function (next) {
     next();
 });
 
-// **Static method**: Generate JWT token
-subscriberSchema.statics.generateToken = function (userId) {
-    const secret = process.env.JWT_SECRET || "mysecretkey"; // Use a secret key
-    const expiresIn = process.env.JWT_EXPIRES_IN || "1h";   // Set token expiration time
-    return jwt.sign({ id: userId }, secret, { expiresIn });
-};
+
 
 module.exports = mongoose.model("User", subscriberSchema);
