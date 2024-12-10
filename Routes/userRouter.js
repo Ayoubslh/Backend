@@ -16,6 +16,9 @@ Router.route('/').get(userControllers.getAllUsers)
 
 
 
+Router.route('/:id').get(userControllers.getUserById).patch(userControllers.updateMe).delete(userControllers.deleteUser);
+
+
 
 
 module.exports = Router;

@@ -60,8 +60,14 @@ const ClaimSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+
     proforma: {
         type: String
+    },
+
+    expertrapport: {
+        type: String
+
     },
     expertrapport: {
         type: String
