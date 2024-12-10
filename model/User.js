@@ -90,10 +90,25 @@ const subscriberSchema = new mongoose.Schema({
     claim: {
         type: mongoose.Schema.ObjectId,
         ref : "claim",
+    },
+    plan:{
+        type:mongoose.Schema.ObjectId,
+        ref:"plan",
+    },
+    role: {
+        type: String,
+        enum: ['user','expert','admin'],
+        default:'user',
     }
 }, { timestamps: true });
 
 
+// **Pre-save middleware**: Hash the password before saving
+subscriberSchema.pre("save", async function (next) {
+    if (!this.isModified("personalInfo.password")) return next(); // Skip if password is not modified
+    this.personalInfo.password = await bcrypt.hash(this.personalInfo.password, 10); // Hash password
+    next();
+});
 subscriberSchema.pre('save',async function(next){
     if(!this.isModified('password')) return next();
     this.password= await bcrypt.hashSync(this.password,12);
@@ -132,6 +147,8 @@ subscriberSchema.methods.creatPasswordResetToken= function(){
  return resetToken;
 
 }
+
+
 
 
 

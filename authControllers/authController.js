@@ -23,7 +23,7 @@ const createSendToken=(user,statusCode,res)=>{
     user.password=undefined;
 
 
-    res.cookie('jwt',token,cookiesoptions)
+    res.cookie('jwt',token,cookiesoptions);
     res.status(statusCode).json({
         status: 'success',
         token,
@@ -45,12 +45,14 @@ exports.signup= async(req,res,next)=>{
 
 exports.login=async(req,res,next)=>{
     const {email,password}=req.body;
+    console.log(email);
+    console.log(password);
     if(!email || !password) {
         return next(new AppError('Please provide email and password', 400));
     }
-    const user=await User.findOne({email:{$eq:email}}).select('+password');
-    
-    if(!user || !await user.correctPassword(password,user.password)){
+    const user=await User.findOne({ "personalInfo.email": email }).select('+personalInfo.password');
+    console.log(user);
+    if(!user || !await user.correctPassword(password,user.personalInfo.password)){
         return next(new AppError('Incorrect email or password', 401));
     }
     createSendToken(user,200,res);
@@ -157,4 +159,3 @@ exports.updatePassword=  async (req,res,next)=>{
 
 }
 
-module.exports = createSendToken
