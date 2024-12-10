@@ -156,3 +156,5 @@ exports.updatePassword=  async (req,res,next)=>{
    createSendToken(user,200,res);
 
 }
+
+module.exports = createSendToken

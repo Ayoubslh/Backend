@@ -22,32 +22,23 @@ exports.getUserById = async (req,res)=> {
         user,
     })
 }
-//sign in
-exports.createUser = async(req,res)=> {
-        // Check if the user already exists
-        const existingUser = await User.findOne({ "personalInfo.email": req.boy.personalInfo.email });
-        if (existingUser) {
-            return res.status(400).json({ message: "Email already in use" });
-        }
 
-        // Create a new user
-        const newUser = new User(req.body);
-        await newUser.save();
-
-        // Generate a JWT token
-        const token = Subscriber.generateToken(newUser._id);
-
-        res.status(201).json({
-            status: "success",
-            newUser,
-        });
-
-}
-
-exports.updateUser = (req,res)=> {
-    res.status(200).json({
-        msg: "user updated",
-    })
+exports.updateUser = async(req,res)=> {
+    const doc = await User.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+      });
+    
+      if(!doc){
+        return next(new Error('No Tour found'));
+      }
+    
+      res.status(200).json({
+        status: 'success',
+        data: {
+          doc,
+        },
+      });
 }
 
 exports.deleteUser = (req,res)=> {
