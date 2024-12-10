@@ -102,6 +102,7 @@ const subscriberSchema = new mongoose.Schema({
         default:'user',
 
     }
+   
 }, { timestamps: true });
 
 
