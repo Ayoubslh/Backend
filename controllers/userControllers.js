@@ -24,23 +24,19 @@ exports.getUserById = async (req,res)=> {
 }
 //sign in
 exports.createUser = async(req,res)=> {
-        // Extract the required fields from the request body
         // Check if the user already exists
-        const existingUser = await User.findOne({ "personalInfo.email": email });
+        const existingUser = await User.findOne({ "personalInfo.email": req.boy.personalInfo.email });
         if (existingUser) {
             return res.status(400).json({ message: "Email already in use" });
         }
 
         // Create a new user
-        const newUser = new User({
-            personalInfo: { fullName, email, password },
-        });
-
+        const newUser = new User(req.body);
         await newUser.save();
 
         // Generate a JWT token
         const token = Subscriber.generateToken(newUser._id);
-        
+
         res.status(201).json({
             status: "success",
             newUser,

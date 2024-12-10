@@ -34,6 +34,10 @@ const createSendToken=(user,statusCode,res)=>{
 }
 
 exports.signup= async(req,res,next)=>{
+    const existingUser = await User.findOne({ "personalInfo.email": req.body.personalInfo.email });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email already in use" });
+        }
     const newUser=await User.create(req.body)
 
     createSendToken(newUser,201,res);
