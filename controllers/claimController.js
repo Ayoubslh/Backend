@@ -14,7 +14,7 @@ exports.getAllClaims= async(req,res)=>{
 }
 
 exports.getUserClaims= async(req,res)=>{
-    const userclaim= await Claims.find({user:req.params.phone});
+    const userclaim= await Claims.find({user:req.params.id});
     res.status(200).json({
         status:'success',
         data:userclaim 

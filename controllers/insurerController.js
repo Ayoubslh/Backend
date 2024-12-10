@@ -36,6 +36,13 @@ exports.creatInsurer= async(req,res)=>{
     })
 
 }
+exports.getPlan=async(req,res)=>{
+    const plan=Plan.find();
+    res.status(200).json({
+        status:"Success",
+        Plan
+    })
+}
 exports.creatPlan= async(req,res)=>{
     const plan= new Plan(req.body);
     res.status(201).json({
