@@ -25,19 +25,25 @@ exports.getUserById = async (req,res)=> {
 //sign in
 exports.createUser = async(req,res)=> {
         // Extract the required fields from the request body
-        if (password !== confirmPassword) {
-            return res.status(400).json({ message: "Passwords do not match" });
+        // Check if the user already exists
+        const existingUser = await User.findOne({ "personalInfo.email": email });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email already in use" });
         }
 
-        // Create a new user with only the required fields
-        const newUser = await User.create(req.body);
+        // Create a new user
+        const newUser = new User({
+            personalInfo: { fullName, email, password },
+        });
 
-        // Save the user while skipping validation for other fields
         await newUser.save();
 
+        // Generate a JWT token
+        const token = Subscriber.generateToken(newUser._id);
+        
         res.status(201).json({
-            message: "User created successfully",
-            user: newUser,
+            status: "success",
+            newUser,
         });
 
 }

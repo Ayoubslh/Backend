@@ -29,10 +29,12 @@ const subscriberSchema = new mongoose.Schema({
         password: {
             type: String,
             required: [true, "password is required"],
+            select:false,
         },
         comfirmePassword: {
             type: String,
             required: [true, "password is required"],
+            select:false,
         }
     },
     housingInfo: {
@@ -91,18 +93,18 @@ const subscriberSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// Hash the password before saving
-subscriberSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) return next();  // Check if the password is being modified
-      // Hash the password with a salt rounds of 10
-      this.password = await bcrypt.hash(this.password, 10);
-      next();
-    
-  });
-  
-  // Method to compare passwords
-  subscriberSchema.methods.matchPassword = async function(enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password); // Compare entered password with hashed password
-  };
+// **Pre-save middleware**: Hash the password before saving
+subscriberSchema.pre("save", async function (next) {
+    if (!this.isModified("personalInfo.password")) return next(); // Skip if password is not modified
+    this.personalInfo.password = await bcrypt.hash(this.personalInfo.password, 10); // Hash password
+    next();
+});
+
+// **Static method**: Generate JWT token
+subscriberSchema.statics.generateToken = function (userId) {
+    const secret = process.env.JWT_SECRET || "mysecretkey"; // Use a secret key
+    const expiresIn = process.env.JWT_EXPIRES_IN || "1h";   // Set token expiration time
+    return jwt.sign({ id: userId }, secret, { expiresIn });
+};
 
 module.exports = mongoose.model("User", subscriberSchema);

@@ -4,7 +4,6 @@ const catchAsync= require('./../utils/catchAsync');
 const jwt=require('jsonwebtoken')
 const AppError=require('./../utils/appError');
 const sendEmail=require('./../utils/email');
-const { validate } = require('../models/tourModel');
 const crypto=require("crypto");
 
 const signToken= id=>{
@@ -34,18 +33,18 @@ const createSendToken=(user,statusCode,res)=>{
     })    
 }
 
-exports.signup=catchAsync( async(req,res,next)=>{
+exports.signup= async(req,res,next)=>{
     const newUser=await User.create({
-name:req.body.name,
-email:req.body.email,
-password:req.body.password,
-passwordConfirm:req.body.passwordConfirm
+    name:req.body.name,
+    email:req.body.email,
+    password:req.body.password,
+    passwordConfirm:req.body.passwordConfirm
     })
 
     createSendToken(newUser,201,res);
-})
+}
 
-exports.login= catchAsync(async(req,res,next)=>{
+exports.login=async(req,res,next)=>{
     const {email,password}=req.body;
     if(!email || !password) {
         return next(new AppError('Please provide email and password', 400));
@@ -56,10 +55,10 @@ exports.login= catchAsync(async(req,res,next)=>{
         return next(new AppError('Incorrect email or password', 401));
     }
     createSendToken(user,200,res);
-})
+}
 
 
-exports.protect =catchAsync(async (req,res,next)=>{
+exports.protect =async (req,res,next)=>{
     
     let token
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
@@ -78,11 +77,10 @@ exports.protect =catchAsync(async (req,res,next)=>{
     return next(new AppError('User recently changed password, Please log in again'),401)
    }
 
-
   req.user=freshUser;
     next()
 
-})
+}
 
 exports.restrictTo=(...roles)=>{
     return(req,res,next)=>{
