@@ -1,16 +1,16 @@
-const express =require('express');
-const claimController=require('./../controllers/claimController');
-const authController=require('./../authControllers/authController')
+const express = require('express');
+const claimController = require('./../controllers/claimController');
+const authController = require('./../authControllers/authController');
+const { AuthMid } = require('../middleware/auth');
 
-const Router=express.Router();
+const router = express.Router();
 
-Router.route('/').get(claimController.getAllClaims).post(claimController.newClaim);
-Router.route('/:id').get(authController.protect,claimController.getAUserClaim)
-Router.route('/:id/accepted').put(authController.protect,authController.restrictTo(['insurer']),claimController.AcceptsClaims)
-Router.route('/:id/rejected').put(claimController.AcceptsClaims)
-
-
-
+router.route('/').get(claimController.getAllClaims).post(claimController.newClaim);
+router.route('/:id').get(claimController.getAUserClaim)
+router.route('/:id/accepted').put(claimController.AcceptsClaims)
+router.route('/:id/rejected').put(claimController.AcceptsClaims)
 
 
-module.exports=Router;
+
+
+module.exports = router;

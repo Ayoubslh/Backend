@@ -19,13 +19,14 @@ const VehicleSchema = new mongoose.Schema({
 });
 
 const WeatherConditionsSchema = new mongoose.Schema({
-    weather: { type: String, required: true }, 
-    visibility: { type: String, required: true } 
+    weather: { type: String, required: true },
+    visibility: { type: String, required: true }
 });
 
 const DamageDescriptionSchema = new mongoose.Schema({
     vehicleRegistrationNumber: { type: String, required: true },
-    description: { type: String, required: true }
+    description: { type: String, required: true },
+    imageUrl: { type: String, required: true },
 });
 
 const WitnessSchema = new mongoose.Schema({
@@ -34,51 +35,46 @@ const WitnessSchema = new mongoose.Schema({
     statement: { type: String, required: true }
 });
 
-const SketchSchema = new mongoose.Schema({
-    imageUrl: { type: String, required: true }, 
-    description: { type: String } 
-});
+
 
 const ClaimSchema = new mongoose.Schema({
     accidentDate: { type: Date, required: true },
-    accidentTime: { type: String, required: true }, 
+    accidentTime: { type: String, required: true },
     accidentLocation: { type: String, required: true },
     drivers: [DriverSchema],
     vehicles: [VehicleSchema],
     weatherConditions: WeatherConditionsSchema,
     damages: [DamageDescriptionSchema],
-    sketch: SketchSchema,
     witnesses: [WitnessSchema],
-    observations: { type: String }, 
-    disagreements: { type: String }, 
+    observations: { type: String },
+    disagreements: { type: String },
     signatures: {
-        driver1: { type: String, required: true }, 
-        driver2: { type: String, required: true }  
+        driver1: { type: String, required: true },
+        driver2: { type: String, required: true }
     },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-  
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:true
-    },
-    proforma:{
-        type:String
 
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    expertrapport:{
-        type:string
+    proforma: {
+        type: String
     },
-    accepted:Boolean,
-    rejectionreason:String,
+    expertrapport: {
+        type: String
+    },
+    accepted: Boolean,
+    rejectionreason: String,
     active: Boolean,
 });
 
-ClaimSchema.pre(/^find/,function(next){
-    this.populate({path:'User',select:'-__v +personalinfo.fullname +personalinfo.phone +personalinfo.address'})
+ClaimSchema.pre(/^find/, function (next) {
+    this.populate({ path: 'User', select: '-__v +personalinfo.fullname +personalinfo.phone +personalinfo.address' })
     next();
-  })
+})
 
 
 const Claim = mongoose.model('Claim', ClaimSchema);

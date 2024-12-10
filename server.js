@@ -1,30 +1,30 @@
-const dotenv=require('dotenv');
-const app= require('./app');
+const dotenv = require('dotenv');
+const app = require('./app');
 const connectDB = require('./utils/connectDB');
 const { connect } = require('mongoose');
-dotenv.config({path:'./config.env'})
+dotenv.config({ path: './config.env' })
 
 
 
 
-const port=process.env.PORT;
+const port = process.env.PORT || 8000;
 console.log(port);
 
 
-const server =app.listen(port,()=>{
-    try{
-      console.log("server connected ...");
-      connectDB();
-      console.log("connet to DB successe ...");
-    } catch(err){
-      console.log("could not connect ...");
-    }
+const server = app.listen(port, () => {
+  try {
+    console.log("server connected ...");
+    connectDB();
+    console.log("connet to DB successe ...");
+  } catch (err) {
+    console.log("could not connect ...");
+  }
 
 })
 process.on('unhandledRejection', err => {
-    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-    console.log(err.name, err.message);
-    server.close(() => {
-      process.exit(1);
-    });
+  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });
