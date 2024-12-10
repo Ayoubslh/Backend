@@ -18,11 +18,16 @@ const InsuranceCompanySchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },
     claim:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Claim',
+        ref: 'claim',
 
     },
    
 });
+
+InsuranceCompany.pre(/^find/,function(next){
+    this.populate({path:'plans',select:'-__v -'}).populate({path:'claim',select:'-__v'})
+    next();
+  })
 
 const InsuranceCompany = mongoose.model('InsuranceCompany', InsuranceCompanySchema);
 

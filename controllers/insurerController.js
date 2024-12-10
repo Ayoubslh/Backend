@@ -1,4 +1,5 @@
 const  Insurer = require('./../model/Insurer');
+const  Plan = require('./../model/Plans');
 const AppError=require('./../utils/appError');
 
 //For frontEnd
@@ -26,7 +27,20 @@ exports.getAnInsurer=async (req,res,next)=>{
 }
 
 
-exports.creatInsurer= async(req,res,next)=>{
+exports.creatInsurer= async(req,res)=>{
     const insurer= new Insurer(req.body)
+    await insurer.save()
+    res.status(201).json({
+      status:"Success",
+      insurer
+    })
+
+}
+exports.creatPlan= async(req,res)=>{
+    const plan= new Plan(req.body);
+    res.status(201).json({
+        status:"Success",
+        plan
+    })
 
 }
