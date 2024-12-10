@@ -3,8 +3,13 @@ const mongoose = require('mongoose');
 const PlanSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
-    coverage: { type: String, required: true },
-    premium: { type: Number, required: true }, 
+coverage: { type:[ String], required: true,
+    enum:[
+        "Civil","Broken glasse","natural disaster","fire","theft","collision"
+    ]
+
+ },
+    price: { type: Number, required: true }, 
     deductible: { type: Number, required: true },
     terms: { type: String, required: true }, 
     isActive: { type: Boolean, default: true }
