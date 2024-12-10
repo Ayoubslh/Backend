@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 
 
 const subscriberSchema = new mongoose.Schema({
-    personalInfo: {
+   
         fullName: {
             type: String,
             required: [true, "Full name is required"],
@@ -36,9 +36,9 @@ const subscriberSchema = new mongoose.Schema({
             type: String,
             required: [true, "password is required"],
             select:false,
-        }
-    },
-    housingInfo: {
+        },
+    
+    
         postalAddress: {
             type: String,
             required: [true, "Postal address is required"],
@@ -54,8 +54,8 @@ const subscriberSchema = new mongoose.Schema({
             required: [true, "Housing area is required"],
             min: [1, "Housing area must be at least 1 m²"],
         },
-    },
-    meterInfo: {
+    
+    
         //PCE : numéro unique présent sur votre facture de gaz 
         //PDL : est un identifiant unique composé de 14 chiffres. Il correspond à l’emplacement de votre installation électrique et est donc rattaché à un logement, et non pas à un client ou à un contrat.
         PDL_PCE: {
@@ -69,15 +69,15 @@ const subscriberSchema = new mongoose.Schema({
             required: [true, "Meter reading is required"],
             min: [0, "Meter reading cannot be negative"],
         },
-    },
+    
     //RIB: The RIB is a unique identifier for a bank account in France (and some other countries like Algeria). It includes information like the bank code, branch code, account number, and a key to verify its validity.
-    bankInfo: {
+    
         RIB: {
             type: String,
             required: [true, "RIB is required"],
             match: [/^\d{23}$/, "RIB must be exactly 23 digits"], // Example for RIB format
         },
-    },
+    
     contractStartDate: {
         type: Date,
         validate: {
@@ -105,54 +105,19 @@ const subscriberSchema = new mongoose.Schema({
    
 }, { timestamps: true });
 
-
-// **Pre-save middleware**: Hash the password before saving
-subscriberSchema.pre("save", async function (next) {
-    if (!this.isModified("personalInfo.password")) return next(); // Skip if password is not modified
-    this.personalInfo.password = await bcrypt.hash(this.personalInfo.password, 10); // Hash password
+// Hash password before saving
+subscriberSchema.pre('save', async function (next) {
+    console.log("ok");
+    if (!this.isModified(this.password)) return next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    this.comfirmePassword = undefined;
     next();
-});
-subscriberSchema.pre('save',async function(next){
-    if(!this.isModified('password')) return next();
-    this.password= await bcrypt.hashSync(this.password,12);
-    this.passwordConfirm=undefined;
-    next();
-
-})
-subscriberSchema.pre('save',function(next){
-  if(!this.isModified('password') || this.isNew) return next();
-  this.passwordChangedAt = Date.now()-1000;
-  next(); 
-
-})
-subscriberSchema.pre(/^find/,function(next){
-  this.find({active:{$ne:false}})
-  next();
-})
-subscriberSchema.methods.correctPassword= async function(candidatePassword,userPassword){
-  return await bcrypt.compare(candidatePassword,userPassword);
-}
-subscriberSchema.methods.changePasswordAfter=function(JWTTimestamp){
-  if(this.passwordChangedAt){
-
-    const passwordChangedTimestamp=parseInt(this.passwordChangedAt.getTime()/1000,10);
-    return JWTTimestamp<passwordChangedTimestamp 
-
-  }
+  });
   
-  return false;
-}
-
-subscriberSchema.methods.creatPasswordResetToken= function(){
-  const resetToken= crypto.randomBytes(32).toString('hex');
- this.passwordResetToken= crypto.createHash('sha256').update(resetToken).digest('hex');
- this.passwordResetExpires=Date.now()+10*60*1000;
- return resetToken;
-
-}
-
-
-
-
+  // Method to compare passwords
+  subscriberSchema.methods.comparePassword = async function (candidatePassword,currentPassword) {
+    return await bcrypt.compare(candidatePassword, currentPassword);
+};
 
 module.exports = mongoose.model("User", subscriberSchema);

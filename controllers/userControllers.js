@@ -25,17 +25,17 @@ exports.getUserById = async (req,res)=> {
 }
 
 exports.updateMe =  async (req, res , next)=>{
+    console.log("ok");
     //1 create error if user POSTs password data
     if(req.body.password || req.body.passwordComfirm)
       return next(new AppError('this rout is not for password updates. Please use /updatePassword.' , 400))
-    // 2 filter out the req.body from the unwanted fields
-      const filteredBody = filterOBj(req.body , 'name' , 'email');
+        console.log("ok1");
     // 3 update user document
-    const user = await User.findByIdAndUpdate(req.user.id , filteredBody , {
+    const user = await User.findByIdAndUpdate(req.user.id , req.body, {
       new: true,
       runValidators : true,
     })
-  
+    console.log(user);
     res.status(200).json({
       status: 'success',
       data : {
