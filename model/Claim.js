@@ -63,11 +63,25 @@ const ClaimSchema = new mongoose.Schema({
         ref:'User',
         required:true
     },
+    proforma:{
+        type:String
+
+    },
+    expertrapport:{
+        type:string
+    },
     accepted:Boolean,
     rejectionreason:String,
     active: Boolean,
 });
 
+ClaimSchema.pre(/^find/,function(next){
+    this.populate({path:'User',select:'-__v +personalinfo.fullname +personalinfo.phone +personalinfo.address'})
+    next();
+  })
+
+
 const Claim = mongoose.model('Claim', ClaimSchema);
+
 
 module.exports = Claim;
