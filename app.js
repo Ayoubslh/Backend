@@ -11,6 +11,12 @@ app.use(express.json());
 app.use('/api/v1/claims',claimRouter);
 app.use('/api/v1/users',userRouter);
 
+//error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.message);
+    res.status(500).json({ error: 'An unexpected error occurred!' });
+});
+
 app.use(globalErrorHandler)
 
 

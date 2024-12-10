@@ -94,12 +94,44 @@ const subscriberSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// **Pre-save middleware**: Hash the password before saving
-subscriberSchema.pre("save", async function (next) {
-    if (!this.isModified("personalInfo.password")) return next(); // Skip if password is not modified
-    this.personalInfo.password = await bcrypt.hash(this.personalInfo.password, 10); // Hash password
+subscriberSchema.pre('save',async function(next){
+    if(!this.isModified('password')) return next();
+    this.password= await bcrypt.hashSync(this.password,12);
+    this.passwordConfirm=undefined;
     next();
-});
+
+})
+subscriberSchema.pre('save',function(next){
+  if(!this.isModified('password') || this.isNew) return next();
+  this.passwordChangedAt = Date.now()-1000;
+  next(); 
+
+})
+subscriberSchema.pre(/^find/,function(next){
+  this.find({active:{$ne:false}})
+  next();
+})
+subscriberSchema.methods.correctPassword= async function(candidatePassword,userPassword){
+  return await bcrypt.compare(candidatePassword,userPassword);
+}
+subscriberSchema.methods.changePasswordAfter=function(JWTTimestamp){
+  if(this.passwordChangedAt){
+
+    const passwordChangedTimestamp=parseInt(this.passwordChangedAt.getTime()/1000,10);
+    return JWTTimestamp<passwordChangedTimestamp 
+
+  }
+  
+  return false;
+}
+
+subscriberSchema.methods.creatPasswordResetToken= function(){
+  const resetToken= crypto.randomBytes(32).toString('hex');
+ this.passwordResetToken= crypto.createHash('sha256').update(resetToken).digest('hex');
+ this.passwordResetExpires=Date.now()+10*60*1000;
+ return resetToken;
+
+}
 
 
 
