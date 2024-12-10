@@ -16,11 +16,18 @@ const InsuranceCompanySchema = new mongoose.Schema({
     password: { type: String, required: true }, // hashed password
     phone: { type: String, required: true },
     address: { type: String, required: true },
+    role:{type:String,default:'insurer'},
     website: { type: String },
     registrationNumber: { type: String, unique: true },
     plans: [PlanSchema],
     createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+    updatedAt: { type: Date, default: Date.now },
+    claim:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Claim',
+
+    },
+   
 });
 
 const InsuranceCompany = mongoose.model('InsuranceCompany', InsuranceCompanySchema);
