@@ -68,7 +68,7 @@ const ClaimSchema = new mongoose.Schema({
 
     },
     expertrapport:{
-        type:string
+        type:String
     },
     accepted:Boolean,
     rejectionreason:String,

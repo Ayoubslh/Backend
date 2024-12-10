@@ -16,7 +16,7 @@ Router.route('/:id').get(userControllers.getUserById).delete(userControllers.del
 Router.post('/signup',authController.signup)
 Router.post('/login',authController.login)
 
-Router.route('/').get(userControllers.getAllUsers).post(userControllers.createUser);
-Router.route('/:id').get(userControllers.getUserById).patch(userControllers.updateUser).delete(userControllers.deleteUser);
+Router.route('/').get(userControllers.getAllUsers)
+Router.route('/:id').get(userControllers.getUserById).patch(userControllers.updateMe).delete(userControllers.deleteUser);
 
 module.exports= Router;
