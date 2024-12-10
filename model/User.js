@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const bcrypt = require('bcryptjs'); 
+
 
 const subscriberSchema = new mongoose.Schema({
     personalInfo: {
@@ -24,6 +26,14 @@ const subscriberSchema = new mongoose.Schema({
             match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
             trim: true,
         },
+        password: {
+            type: String,
+            required: [true, "password is required"],
+        },
+        comfirmePassword: {
+            type: String,
+            required: [true, "password is required"],
+        }
     },
     housingInfo: {
         postalAddress: {
@@ -79,5 +89,20 @@ const subscriberSchema = new mongoose.Schema({
         ref : "claim",
     }
 }, { timestamps: true });
+
+
+// Hash the password before saving
+subscriberSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();  // Check if the password is being modified
+      // Hash the password with a salt rounds of 10
+      this.password = await bcrypt.hash(this.password, 10);
+      next();
+    
+  });
+  
+  // Method to compare passwords
+  subscriberSchema.methods.matchPassword = async function(enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password); // Compare entered password with hashed password
+  };
 
 module.exports = mongoose.model("User", subscriberSchema);

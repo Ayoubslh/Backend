@@ -1,6 +1,6 @@
 const express =require('express');
 const mongoose = require('mongoose');
-const userRouter=requir('./Routes/userRouter.js');
+const userRouter=require('./Routes/userRouter.js');
 require("express-async-errors");
 const app = express();
 const claimRouter=require("./Routes/ClaimRouter");
