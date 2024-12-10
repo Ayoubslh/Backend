@@ -23,24 +23,6 @@ exports.getUserById = async (req,res)=> {
     })
 }
 
-exports.updateUser = async(req,res)=> {
-    const doc = await User.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-      });
-    
-      if(!doc){
-        return next(new Error('No Tour found'));
-      }
-    
-      res.status(200).json({
-        status: 'success',
-        data: {
-          doc,
-        },
-      });
-}
-
 exports.deleteUser = (req,res)=> {
     res.status(200).json({
         msg: "user deleted",

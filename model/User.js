@@ -94,6 +94,13 @@ const subscriberSchema = new mongoose.Schema({
     plan:{
         type:mongoose.Schema.ObjectId,
         ref:"plan",
+
+    },
+    role: {
+        type: String,
+        enum: ['user','expert','admin'],
+        default:'user',
+
     }
 }, { timestamps: true });
 
