@@ -1,52 +1,53 @@
-const  Insurer = require('./../model/Insurer');
-const  Plan = require('./../model/Plans');
-const AppError=require('./../utils/appError');
+const Insurer = require('./../model/Insurer');
+const Plan = require('./../model/Plans');
+const AppError = require('./../utils/appError');
 
 //For frontEnd
-exports.getInsurer=async (req,res,next)=>{
-    const insurer=Insurer.find()
+exports.getInsurer = async (req, res, next) => {
+    const insurer = await Insurer.find()
+    console.log(insurer);
 
     res.status(200).json({
-        status:'success',
-        data:insurer
+        status: 'success',
+        data: insurer
 
     });
 }
 
-exports.getAnInsurer=async (req,res,next)=>{
-    const insurer= Insurer.findById(req.params.id);
-    if(!insurer) return next(new AppError("Insurer not Found",404)); 
+exports.getAnInsurer = async (req, res, next) => {
+    const insurer = await Insurer.findById(req.params.id);
+    if (!insurer) return next(new AppError("Insurer not Found", 404));
 
-  res.status(201).json({
-    status:'success',
-        data:insurer
-
-
-  })
-
-}
-
-
-exports.creatInsurer= async(req,res)=>{
-    const insurer= new Insurer(req.body)
-    await insurer.save()
     res.status(201).json({
-      status:"Success",
-      insurer
+        status: 'success',
+        data: insurer
+
+
     })
 
 }
-exports.getPlan=async(req,res)=>{
-    const plan=Plan.find();
+
+
+exports.creatInsurer = async (req, res) => {
+    const insurer = new Insurer(req.body)
+    await insurer.save()
+    res.status(201).json({
+        status: "Success",
+        insurer
+    })
+
+}
+exports.getPlan = async (req, res) => {
+    const plan = Plan.find();
     res.status(200).json({
-        status:"Success",
+        status: "Success",
         Plan
     })
 }
-exports.creatPlan= async(req,res)=>{
-    const plan= new Plan(req.body);
+exports.creatPlan = async (req, res) => {
+    const plan = new Plan(req.body);
     res.status(201).json({
-        status:"Success",
+        status: "Success",
         plan
     })
 

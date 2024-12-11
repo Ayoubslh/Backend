@@ -72,6 +72,10 @@ const ClaimSchema = new mongoose.Schema({
     expertrapport: {
         type: String
     },
+    Insurance: {
+        type: mongoose.Schema.ObjectId,
+        ref: "InsuranceCompany",
+    },
     accepted: Boolean,
     rejectionreason: String,
     active: Boolean,

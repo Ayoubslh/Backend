@@ -1,4 +1,4 @@
-const User = require('../model/User');
+const Expert = require('../model/expert');
 const jwt = require('jsonwebtoken');
 const AppError = require('./../utils/appError');
 const { promisify } = require('util');
@@ -30,12 +30,11 @@ const createSendToken = (user, statusCode, res) => {
     });
 };
 
-// User Signup
+// Expert Signup
 exports.signup = async (req, res, next) => {
     try {
-        const newUser = await User.create(req.body);
-        console.log(newUser);
-        createSendToken(newUser, 201, res);
+        const newExpert = await Expert.create(req.body);
+        createSendToken(newExpert, 201, res);
     } catch (err) {
         next(new AppError(err.message, 400));
     }
@@ -43,7 +42,6 @@ exports.signup = async (req, res, next) => {
 
 // User Login
 exports.login = async (req, res, next) => {
-    console.log(req.params);
     try {
         const { email, password } = req.body;
 
@@ -53,19 +51,17 @@ exports.login = async (req, res, next) => {
         }
 
         // Find user and include password field
-        const user = await User.findOne({ email }).select('+password');
-        console.log(user);
+        const expert = await Expert.findOne({ email }).select('+password');
 
 
         // Verify user and password
-        if (!user || !(await user.correctPassword(password, user.password))) {
-            throw new AppError('Please provide email and password', 400);
+        if (!expert || !(await expert.correctPassword(password, expert.password))) {
+            throw new AppError('Please provide correct email and password', 400);
         }
-
         // Send token to user
-        createSendToken(user, 200, res);
+        createSendToken(expert, 200, res);
     } catch (err) {
-        next(new AppError('Login failed', 500));
+        next(err);
     }
 };
 
@@ -92,19 +88,20 @@ exports.protect = async (req, res, next) => {
                 throw new AppError('Invalid token. Please log in again.', 401);
             });
 
+
         // Find user by decoded ID
-        const freshUser = await User.findById(decoded.id);
-        if (!freshUser) {
+        const freshExpert = await Expert.findById(decoded.id);
+        if (!freshExpert) {
             return next(new AppError('The user belonging to this token no longer exists.', 401));
         }
 
         // Check if user changed password
-        if (freshUser.changedPasswordAfter(decoded.iat)) {
+        if (freshExpert.changedPasswordAfter(decoded.iat)) {
             return next(new AppError('User recently changed password. Please log in again.', 401));
         }
 
         // Attach user to request
-        req.user = freshUser;
+        req.user = freshExpert;
         next();
     } catch (error) {
         next(error);
@@ -114,8 +111,7 @@ exports.protect = async (req, res, next) => {
 // Restrict Access to Roles
 exports.restrictTo = (...roles) => (req, res, next) => {
     try {
-        console.log(roles);
-        if (!roles.includes(req.user.role)) {
+        if (!roles.includes(req.expert.role)) {
             return next(new AppError('You do not have permission to perform this action', 403));
         }
         next();

@@ -1,6 +1,7 @@
 const User = require('../model/User');
 const jwt = require("jsonwebtoken");
 const AppError = require('../utils/appError');
+const Plan = require('../model/Plans');
 // only for admin
 exports.getAllUsers = async (req, res) => {
     const users = await User.find();
@@ -12,17 +13,17 @@ exports.getAllUsers = async (req, res) => {
     })
 }
 
-// exports.getUserById = async (req,res)=> {
-//     const user = await User.findById(req.params.id);
-//     if(!user) {
-//         return next(new AppErrorError("user not found",404));
+exports.getUserById = async (req, res) => {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+        return next(new AppErrorError("user not found", 404));
 
-//     }
-//     res.status(200).json({
-//         status: "successe",
-//         user,
-//     })
-// }
+    }
+    res.status(200).json({
+        status: "successe",
+        user,
+    })
+}
 
 exports.updateMe = async (req, res, next) => {
     console.log("ok");
@@ -59,4 +60,10 @@ exports.deleteUser = async (req, res) => {
         status: "success",
         message: "User deleted",
     });
+}
+
+exports.buyPlan = async (req, res, next) => {
+    const { insurerId, planId } = req.params;
+    const plan = await Plan.findById(planId);
+
 }

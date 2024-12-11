@@ -32,12 +32,13 @@ const subscriberSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       select: false,
     },
-    comfirmePassword: {
+    comfirmPassword: {
       type: String,
       required: [true, "Password confirmation is required"],
       validate: {
         validator: function (value) {
           // `this.password` is available only on `save()` or `create()`
+          console.log();
           return value === this.password;
         },
         message: "Passwords do not match",
@@ -67,7 +68,7 @@ const subscriberSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Meter reading is required"],
       min: [0, "Meter reading cannot be negative"],
-      maxlenght:6
+      maxlenght: 6
     },
     RIB: {
       type: String,
@@ -96,6 +97,7 @@ const subscriberSchema = new mongoose.Schema(
       enum: ["user", "expert", "admin"],
       default: "user",
     },
+
   },
   { timestamps: true }
 );
@@ -105,7 +107,7 @@ subscriberSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  this.comfirmePassword = undefined; // Remove the confirmation field
+  this.comfirmPassword = undefined; // Remove the confirmation field
   next();
 });
 

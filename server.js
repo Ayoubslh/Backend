@@ -13,7 +13,7 @@ console.log(port);
 
 const server = app.listen(port, () => {
   try {
-    console.log("server connected ...");
+    console.log("server connected ...", { port });
     connectDB();
     console.log("connet to DB successe ...");
   } catch (err) {
