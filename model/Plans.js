@@ -5,8 +5,8 @@ const PlanSchema = new mongoose.Schema({
     description: { type: String, required: true },
     coverage: [
         {
-            type: { 
-                type: String, 
+            type: {
+                type: String,
                 required: true,
                 enum: [
                     "Civil",
@@ -24,8 +24,15 @@ const PlanSchema = new mongoose.Schema({
     price: { type: Number, required: true }, // Base price
     deductible: { type: Number, required: true },
     terms: { type: String, required: true },
-   
-    isActive: { type: Boolean, default: true }
+    activatedAt: {
+        type: Date,
+        default: Date.now() * 1000,
+    },
+    expiresAt: {
+        type: Date,
+        default: Date.now() + 6 * 30 * 24 * 3600 * 1000,
+    },
+    isActive: { type: Boolean, default: false }
 });
 
 const Plan = mongoose.model('Plan', PlanSchema);

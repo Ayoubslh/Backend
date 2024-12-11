@@ -4,6 +4,7 @@ const AppError = require('./../utils/appError');
 
 //For frontEnd
 exports.getInsurer = async (req, res, next) => {
+    console.log('ok');
     const insurer = await Insurer.find()
     console.log(insurer);
 
@@ -28,15 +29,6 @@ exports.getAnInsurer = async (req, res, next) => {
 }
 
 
-exports.creatInsurer = async (req, res) => {
-    const insurer = new Insurer(req.body)
-    await insurer.save()
-    res.status(201).json({
-        status: "Success",
-        insurer
-    })
-
-}
 exports.getPlan = async (req, res) => {
     const plan = Plan.find();
     res.status(200).json({

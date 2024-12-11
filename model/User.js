@@ -97,7 +97,6 @@ const subscriberSchema = new mongoose.Schema(
       enum: ["user", "expert", "admin"],
       default: "user",
     },
-
   },
   { timestamps: true }
 );

@@ -34,7 +34,7 @@ exports.updateMe = async (req, res, next) => {
     // 3 update user document
     const user = await User.findByIdAndUpdate(req.user.id, req.body, {
         new: true,
-        runValidators: true,
+        runValidators: false,
     })
     console.log(user);
     res.status(200).json({
@@ -65,5 +65,6 @@ exports.deleteUser = async (req, res) => {
 exports.buyPlan = async (req, res, next) => {
     const { insurerId, planId } = req.params;
     const plan = await Plan.findById(planId);
-
+    console.log(req.user._id);
+    const user = await user.findByIdAndUpdate(req.user._id)
 }
