@@ -67,6 +67,7 @@ const subscriberSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Meter reading is required"],
       min: [0, "Meter reading cannot be negative"],
+      maxlenght:6
     },
     RIB: {
       type: String,
