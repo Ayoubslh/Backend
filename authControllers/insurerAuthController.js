@@ -1,4 +1,4 @@
-const User = require('../model/User');
+const Insurer = require('../model/Insurer');
 const jwt = require('jsonwebtoken');
 const AppError = require('./../utils/appError');
 const { promisify } = require('util');
@@ -30,12 +30,11 @@ const createSendToken = (user, statusCode, res) => {
     });
 };
 
-// User Signup
+// Expert Signup
 exports.signup = async (req, res, next) => {
     try {
-        const newUser = await User.create(req.body);
-        console.log(newUser);
-        createSendToken(newUser, 201, res);
+        const newInsurer = await Insurer.create(req.body);
+        createSendToken(newInsurer, 201, res);
     } catch (err) {
         next(new AppError(err.message, 400));
     }
@@ -43,7 +42,6 @@ exports.signup = async (req, res, next) => {
 
 // User Login
 exports.login = async (req, res, next) => {
-    console.log(req.params);
     try {
         const { email, password } = req.body;
 
@@ -53,19 +51,17 @@ exports.login = async (req, res, next) => {
         }
 
         // Find user and include password field
-        const user = await User.findOne({ email }).select('+password');
-        console.log(user);
+        const insurer = await Insurer.findOne({ email }).select('+password');
 
 
         // Verify user and password
-        if (!user || !(await user.correctPassword(password, user.password))) {
-            throw new AppError('Please provide email and password', 400);
+        if (!expert || !(await expert.correctPassword(password, insurer.password))) {
+            throw new AppError('Please provide correct email and password', 400);
         }
-
         // Send token to user
-        createSendToken(user, 200, res);
+        createSendToken(insurer, 200, res);
     } catch (err) {
-        next(new AppError('Login failed', 500));
+        next(err);
     }
 };
 
@@ -93,18 +89,18 @@ exports.protect = async (req, res, next) => {
             });
 
         // Find user by decoded ID
-        const freshUser = await User.findById(decoded.id);
-        if (!freshUser) {
+        const freshInsurer = await Insurer.findById(decoded.id);
+        if (!freshInsurer) {
             return next(new AppError('The user belonging to this token no longer exists.', 401));
         }
 
         // Check if user changed password
-        if (freshUser.changedPasswordAfter(decoded.iat)) {
+        if (freshInsurer.changedPasswordAfter(decoded.iat)) {
             return next(new AppError('User recently changed password. Please log in again.', 401));
         }
 
         // Attach user to request
-        req.user = freshUser;
+        req.user = freshInsurer;
         next();
     } catch (error) {
         next(error);
@@ -114,8 +110,7 @@ exports.protect = async (req, res, next) => {
 // Restrict Access to Roles
 exports.restrictTo = (...roles) => (req, res, next) => {
     try {
-        console.log(roles);
-        if (!roles.includes(req.user.role)) {
+        if (!roles.includes(req.insurer.role)) {
             return next(new AppError('You do not have permission to perform this action', 403));
         }
         next();
